@@ -1,73 +1,59 @@
 import socket
 import sys
-import selectors
-import types
+import threading
 
-from parser2 import HTTPResponseParse
+from parser2 import HTTPRequest
 
 class Server:
     def __init__(self, server_addr):
         self.server_addr = server_addr
-        self.sel = selectors.DefaultSelector()
-
-    def decode_http(self, st):
-        return json.loads(st)
-        
-
+    
     def start(self):
         self.lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.lsock.bind(self.server_addr)
         self.lsock.listen()
         print(f"Listening on {self.server_addr}")
-        self.lsock.setblocking(False)
-        self.sel.register(self.lsock, selectors.EVENT_READ, data=None)
 
-    def accept_wrapper(self, sock):
-        conn, addr = sock.accept()
-        print(f"Accepted connection from {addr}")
-        conn.setblocking(False)
-        data = types.SimpleNamespace(addr=addr, inb=b"", outb=b"")
-        events = selectors.EVENT_READ | selectors.EVENT_WRITE
-        self.sel.register(conn, events, data=data)
+        while True:
+            conn, addr = self.lsock.accept()
+            thread = threading.Thread(target=self.service_connection, args=(conn, addr))
+            thread.start()
 
-    def service_connection(self, key, mask):
-        sock = key.fileobj
-        data = key.data
-
-        if mask & selectors.EVENT_READ:
-            recv_data = sock.recv(1024)
-            if recv_data:
-                data.outb += recv_data
+    def service_connection(self, conn, addr):
+        print(f"Open connection on {addr}")
+        connected = True
+        data = ''
+        while not '\r\n' in data and not '\n\n' in data:
+            out = conn.recv(1024)
+            if not out:
+                connected = False
+                break
             else:
-                print(f"Closing connection to {data.addr}")
-                self.sel.unregister(sock)
-                sock.close()
+                data += out.decode()
+
+        print(data)
+            
+        while connected:
+            request = HTTPRequest(data)
+            response = b"HTTP/1.1 404 Bad request\r\nContent-Length: 9\r\n\r\nNot found"
+            print(response.decode())
+            while not response:
+                sent = conn.send(response)
+                response = response[sent:]
+            connected = False
+        print(f"Close connection on {addr}")
+        conn.close()
+        
+            
                 
-        if mask & selectors.EVENT_WRITE:
-            if data.outb:
-                print(data.outb)
-                request = HTTPResponseParse(data.outb)
-                sent = sock.send(request.parse_request().decode())
-                data.outb = data.outb[sent:]
-            
-            
-    def work(self):
-        try:
-            while True:
-                event = self.sel.select(timeout=None)
-                for key, mask in event:
-                    if key.data is None:
-                        self.accept_wrapper(key.fileobj)
-                    else:
-                        self.service_connection(key, mask)
-        except KeyboardInterrupt:
-            self.sel.close()
-            
+                
+
 if __name__ == "__main__":
-    server = Server(('127.0.0.1', 8082))
+    ip = str(sys.argv[1])
+    port = int(sys.argv[2])
+    server = Server((ip, port))
     try:
         server.start()
-        server.work()
     except KeyboardInterrupt:
         sys.exit(0)
         

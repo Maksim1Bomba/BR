@@ -3,6 +3,7 @@ from io import BytesIO
 
 class HTTPResponseParse(BaseHTTPRequestHandler):
     def __init__(self, request_text):
+        super().__init__()
         self.rfile = BytesIO(request_text)
         self.raw_requestline = self.rfile.readline()
         self.error_code = self.error_message = None
