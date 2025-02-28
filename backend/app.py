@@ -23,24 +23,24 @@ class Server:
         print(f"Open connection on {addr}")
         connected = True
         data = ''
-        while not '\r\n' in data and not '\n\n' in data:
-            out = conn.recv(1024)
-            if not out:
-                connected = False
-                break
-            else:
-                data += out.decode()
+        
+        out = conn.recv(1024)
+        if not out:
+            connected = False
+        else:
+            data += out.decode()
 
         print(data)
+        print()
+        print(out)
             
-        while connected:
+        if connected:
             request = HTTPRequest(data)
             response = b"HTTP/1.1 404 Bad request\r\nContent-Length: 9\r\n\r\nNot found"
-            print(response.decode())
             while not response:
                 sent = conn.send(response)
                 response = response[sent:]
-            connected = False
+                
         print(f"Close connection on {addr}")
         conn.close()
         
