@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<todo version="0.1.20">
+    <note priority="medium" time="1740944053">
+        move necessary file for nginx from server to localhost in dir services
+    </note>
+    <note priority="medium" time="1740944096">
+        ask Dima about services and nginx
+    </note>
+</todo>
