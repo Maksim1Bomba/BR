@@ -2,11 +2,14 @@ import socket
 import sys
 import threading
 
-from parser2 import HTTPRequest
+from parser import HTTPRequest
+from response import MakeHTTPResponse
+from hello import hello
 
 class Server:
     def __init__(self, server_addr):
         self.server_addr = server_addr
+        self.paths = {}
     
     def start(self):
         self.lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,30 +34,35 @@ class Server:
             data += out.decode()
 
         print(data)
-        print()
-        print(out)
             
         if connected:
             request = HTTPRequest(data)
-            response = b"HTTP/1.1 404 Bad request\r\nContent-Length: 9\r\n\r\nNot found"
-            while not response:
+            if request.path in self.paths.keys():
+                json = self.paths[request.path]()
+                makeResponse = MakeHTTPResponse(200, json)
+            else:
+                makeResponse = MakeHTTPResponse(404, '')
+                
+            response = makeResponse.make()
+            print(response.decode())
+            while response:
                 sent = conn.send(response)
                 response = response[sent:]
-                
         print(f"Close connection on {addr}")
         conn.close()
-        
-            
-                
-                
+
+    def add_path(self, path, func):
+        self.paths[path] = func
 
 if __name__ == "__main__":
     ip = str(sys.argv[1])
     port = int(sys.argv[2])
     server = Server((ip, port))
     try:
+        server.add_path('/hello', hello)
         server.start()
     except KeyboardInterrupt:
         sys.exit(0)
         
     
+

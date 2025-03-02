@@ -8,16 +8,13 @@ class MakeHTTPResponse:
         self.content_type = 'Content-Type: application/json'
         self.charset = 'charset=utf-8'
         self.length = str(len(json))
+        self.contentLength = f'content-length: {self.length}'
         
     def make(self):
         header = f'{self.httpVersion} {self.status} {self.statusResponse[self.status]}'
         addInfo = f'{self.content_type}; {self.charset}'
 
-        response = f'{header}\r\n{addInfo}\r\n\r\n{self.json}'
+        response = f'{header}\r\n{addInfo}\r\n{self.contentLength}\r\n\r\n{self.json}'
         
         return response.encode()
-
-
-a = MakeHTTPResponse(200, '{asas: asdas}')
-print(a.make().decode())
 
