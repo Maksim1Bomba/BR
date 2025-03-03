@@ -25,6 +25,7 @@ Test your installation:
 ```
 sudo docker run hello-world
 ```
+Don't forget make for docker special user, all comands in *.sh start without sudo. 
 For more information: info(https://docker-curriculum.com/)
 
 Nginx for working with https requires certificates (domain name, expire and so on), certbot help to determine this problem:
