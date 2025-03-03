@@ -1,4 +1,4 @@
-FROM nginx:1.27.4-alpine-slim
+FROM nginx:1.26-alpine
 
 # RUN apk update
 
