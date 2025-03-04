@@ -1,3 +1,5 @@
+cp -r frontend ./services
+
 docker build -t nginx ./services;
 docker build -t server ./backend;
 
