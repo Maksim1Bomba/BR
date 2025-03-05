@@ -12,7 +12,7 @@ function init(){
 	})
  	.then(json => {
 	    if (json.success) {
-		
+
 	    } else {
 		document.getElementById('cont').style.display = 'none';
 	    }
