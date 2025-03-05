@@ -55,8 +55,8 @@ class Server:
         self.paths[path] = func
 
 if __name__ == "__main__":
-    ip = str(sys.argv[1])
-    port = int(sys.argv[2])
+    ip = '127.0.0.1'
+    port = 8080
     server = Server((ip, port))
     try:
         server.add_path('/hello', hello)
