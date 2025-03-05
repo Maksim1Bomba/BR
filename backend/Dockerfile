@@ -1,5 +1,5 @@
-FROM python:3.10-alpine
+FROM python:3.10-slim
 WORKDIR /server
-ADD app.py hello.py parser.py response.py .
+COPY app.py hello.py parser.py response.py /server
 EXPOSE 8080
-CMD [“python”, “./app.py”] 
+CMD exec(open("/server/app.py").read())
