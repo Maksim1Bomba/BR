@@ -3,4 +3,4 @@ WORKDIR /server
 COPY app.py hello.py parser.py response.py /server
 EXPOSE 8080
 RUN pip install -r requirements.txt
-CMD ["python": "app.py"]
+CMD python app.py
