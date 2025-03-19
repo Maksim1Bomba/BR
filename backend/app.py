@@ -4,7 +4,9 @@ import select
 
 from parser import HTTPRequest
 from response import MakeHTTPResponse
-from hello import hello
+from psql import Database
+from login import login
+
 
 class Server:
     def __init__(self, server_addr):
@@ -18,6 +20,8 @@ class Server:
         self.lsock.listen(5)
         self.sockets_list.append(self.lsock)
         print(f"Listening on {self.server_addr}")
+        self.psql = Database()
+        self.psql.start()
 
         while True:
             read_sockets, _, _ = select.select(self.sockets_list, [], [])
@@ -30,24 +34,23 @@ class Server:
                     self.service_connection(notified_socket)
                 
     def service_connection(self, conn):
-        message = conn.recv(1024)
-        request = message
+        recv = conn.recv(1024)
+        message = recv
         while not b'\r\n\r\n' in message:
-            print(message)
-            request += message
-            message = conn.recv(1024)
-        print(request.decode())
+            message += recv
+            recv = conn.recv(1024)
+#        print(request.decode())
 
-        if request:
-            request = HTTPRequest(request.decode())
+        if message:
+            request = HTTPRequest(message.decode())
             if request.path in self.paths.keys():
-                json = self.paths[request.path]()
+                json = self.paths[request.path](request, self.psql)
                 makeResponse = MakeHTTPResponse(200, json)
             else:
                 makeResponse = MakeHTTPResponse(404, '')
                 
             response = makeResponse.make()
-            print(response.decode())
+#            print(response.decode())
             while response:
                 sent = conn.send(response)
                 response = response[sent:]
@@ -61,10 +64,10 @@ class Server:
 
 if __name__ == "__main__":
     ip = '127.0.0.1'
-    port = 8082
+    port = 8081
     server = Server((ip, port))
     try:
-        server.add_path('/hello', hello)
+        server.add_path('/login', login)
         server.start()
     except KeyboardInterrupt:
         sys.exit(0)

@@ -1,3 +1,5 @@
+import json
+
 class HTTPRequest:    
     def __init__(self, raw_request: str):
         self.raw_request = raw_request.strip()
@@ -9,13 +11,12 @@ class HTTPRequest:
         self._parse()
     
     def _parse(self):
-        parts = self.raw_request.split('\n\n', 1)
+        parts = self.raw_request.split('\r\n\r\n', 1)
         headers_section = parts[0]
-        self.body = parts[1] if len(parts) > 1 else ""
+        self.body = json.loads(parts[1] if len(parts) > 1 else "")
         
         # Split headers into lines
         header_lines = headers_section.split('\n')
-        
         # Parse the request line (first line)
         if header_lines:
             request_line = header_lines[0].split(' ')
@@ -32,3 +33,4 @@ class HTTPRequest:
 
     def __repr__(self):
         return f"HTTPRequest(method='{self.method}', path='{self.path}', headers={len(self.headers)} items)"
+
