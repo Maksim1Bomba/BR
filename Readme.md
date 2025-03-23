@@ -46,7 +46,7 @@ If you have had old versions of certbot, reinstall it:
 sudo apt-get remove certbot
 sudo snap install --classic certbot
 ```
-All files will recive in ./services/cert/
+All files will recive in ./services/nginx/cert/
 
 ## Run
 

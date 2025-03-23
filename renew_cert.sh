@@ -1,1 +1,1 @@
-sudo certbot certonly --standalone -d bladerunner2049.online --config-dir /home/a1337/projects/BR/services/cert --email eeggorr120207@gmail.com --agree-tos --force-renewal
+sudo certbot certonly --standalone  -d your_domain_name --config-dir ./services/nginx/cert/ --email your_email --agree-tos --force-renewal
