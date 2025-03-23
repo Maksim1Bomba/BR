@@ -28,6 +28,12 @@ sudo docker run hello-world
 Don't forget make for docker special user, all comands in *.sh start without sudo. 
 For more information: info(https://docker-curriculum.com/)
 
+Export ```PSQL_PASSWORD``` on your host, enter the password.
+Config of psql have user and database named ```a1337```.
+Host of postgres is 0.0.0.0 and port - 5432. (Look backend/psql_config.py)
+
+Also you need to repair ```build.sh``` file, indicate your data in the last str.
+
 Nginx for working with https requires certificates (domain name, expire and so on), certbot help to determine this problem:
 
 ```
@@ -44,7 +50,7 @@ All files will recive in ./services/cert/
 
 ## Run
 
-Start the server in docker conteiner, you just need to type some commands shown below:
+Start the server in docker container, you just need to type some commands shown below:
 
 ```
 sh build.sh

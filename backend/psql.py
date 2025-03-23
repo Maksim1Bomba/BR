@@ -21,12 +21,12 @@ class Database:
         self.conn.close()
 
     def check_auth(self, login, password):
-        self.cur.callproc("server.check_authentication", (login, password))
+        self.cur.callproc("check_authentication", (login, password))
         ans = self.cur.fetchone()
         return ans[0]
 
-    def add_user(self, firstname, lastname):
-        self.cur.callproc("server.add_user", (firstname, lastname))
-        text = self.cur.fetchone()
-        print(text)
+    def add_user(self, firstname, lastname, login, password):
+        self.cur.callproc("add_user", (firstname, lastname, login, password))
+        ans = self.cur.fetchone()
         self.conn.commit()
+        return ans[0]
