@@ -1,8 +1,7 @@
 FROM nginx:1.26-alpine
 
-# RUN apk update
-
-COPY ./nginx.conf /etc/nginx/
-COPY ./cert/archive /etc/letsencrypt/archive
-COPY ./cert/live/ /etc/letsencrypt/live
-COPY ./repositories /etc/apk/repositories
+COPY frontend/404.html frontend/hello.html frontend/index.html frontend/login.js /etc/nginx/
+COPY services/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY services/nginx/cert/archive /etc/letsencrypt/archive
+COPY services/nginx/cert/live/ /etc/letsencrypt/live
+COPY services//nginx/repositories /etc/apk/repositories

@@ -13,7 +13,10 @@ class HTTPRequest:
     def _parse(self):
         parts = self.raw_request.split('\r\n\r\n', 1)
         headers_section = parts[0]
-        self.body = json.loads(parts[1] if len(parts) > 1 else "")
+        if len(parts) > 1:
+            self.body = json.loads(parts[1])
+        else:
+            self.body = ""
         
         # Split headers into lines
         header_lines = headers_section.split('\n')
