@@ -34,12 +34,22 @@ class Server:
                     self.service_connection(notified_socket)
                 
     def service_connection(self, conn):
-        recv = conn.recv(1024)
-        message = recv
-        while not b'\r\n\r\n' in message:
-            message += recv
+        try:
             recv = conn.recv(1024)
-#        print(request.decode())
+            message = recv
+            if not message:
+                print(f"Close connection, no data")
+                self.sockets_list.remove(conn)
+                conn.close()
+                return ''
+            while not b'\r\n\r\n' in message:
+                recv = conn.recv(1024)
+                message += recv
+        except ConnectionResetError:
+            print(f"Close connection because of ConnectionResetError")
+            self.sockets_list.remove(conn)
+            conn.close()
+            return ''
 
         if message:
             request = HTTPRequest(message.decode())
