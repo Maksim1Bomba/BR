@@ -1,7 +1,9 @@
+import json
+
 def login(request, database):
     print(request.body["login"])
-    if database.check_auth(request.body["login"], request.body["password"]):
-        return '{"success": "true"}'
+    if request.body["login"]:# database.check_auth(request.body["login"], request.body["password"]):
+        return json.load('{"success": "true"}')
     else:
-        return '{"success": "false"}'
+        return json.load('{"success": "false"}')
     

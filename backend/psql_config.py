@@ -1,8 +1,10 @@
+import os
+
 param = dict(
     dbname='database_name',
     user='user_name',
     password=os.environ["PSQL_PASSWORD"],
-    host='0.0.0.0',
+    host='postgres',
     port='5432'
 )
 

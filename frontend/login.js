@@ -24,10 +24,6 @@ function login() {
 };
 
 
-function renderContent(content){
-    document.body.innerHTML = `blabla`;
-}
-
 function renderError(error){
     if (error == 404){
 	render404();
