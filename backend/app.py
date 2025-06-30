@@ -51,19 +51,19 @@ class Server:
             conn.close()
             return ''
 
-        if message:
-            request = HTTPRequest(message.decode())
-            if request.path in self.paths.keys():
-                json = self.paths[request.path](request, self.psql)
-                makeResponse = MakeHTTPResponse(200, json)
-            else:
-                makeResponse = MakeHTTPResponse(404, '')
+        request = HTTPRequest(message.decode())
+        print(request.path, self.paths.keys())
+        if request.path in self.paths.keys():
+            json = self.paths[request.path](request, self.psql)
+            makeResponse = MakeHTTPResponse(200, json)
+        else:
+            print(404)
+            makeResponse = MakeHTTPResponse(404, '')
                 
-            response = makeResponse.make()
-#            print(response.decode())
-            while response:
-                sent = conn.send(response)
-                response = response[sent:]
+        response = makeResponse.make()
+        while response:
+            sent = conn.send(response)
+            response = response[sent:]
                 
         print(f"Close connection")
         self.sockets_list.remove(conn)
